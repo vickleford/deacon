@@ -1,0 +1,1 @@
+Truthfully, I'm really just using it from ipython as a script suite right now--yes, calling the functions individually.
