@@ -27,7 +27,7 @@ def get_auth(pyrax_environment):
     return r.json()
 
 # just make one call.
-response = get_auth('actionlogsdev')
+response = get_auth('actionlogs')
     
     
 def get_token():
