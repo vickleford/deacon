@@ -18,10 +18,12 @@ def get_entity(entity_id):
     
     return r.json()
     
-#def show_entities():
-#    ents = get_entities()
-#    for value in ents['values']:
-#        print("
+def show_entities():
+    row = "{:<15}{:<40}{:<40}{:<15}{:<15}"
+    ents = get_entities()
+    print(row.format('ID', 'Label', 'Agent ID', 'Created', 'Updated'))
+    for value in ents['values']:
+        print(row.format(value['id'], value['label'], value['agent_id'], value['created_at'], value['updated_at']))
 
 def update_entity(entity_id, payload):
     """Update an entity with a payload.
