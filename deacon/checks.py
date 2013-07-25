@@ -58,8 +58,15 @@ def create_check(entity_id, timeout=15, period=60, mzpoll=[ "mzdfw", "mzord", "m
 
 def create_network_check(entity_id, target='eth0'):
     personality = {
-    
+        "type": "agent.network",
+        "label": "{i} Network Check".format(i=target),
+        "details": {
+            "target": target
+        }
     }
+    
+    return create_check(entity_id, extras=personality)
+    
 
 def create_disk_check(entity_id, target='/dev/xvda1'):
     personality = {
