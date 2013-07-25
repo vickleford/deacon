@@ -14,6 +14,10 @@ def list_metrics(entity_id, check_id):
     return r.json()
     
     
-def fetch_points(entity_id, check_id, metric_name):
+def fetch_points(entity_id, check_id, metric_name, params={}):
     
-    url = '{ep}/entities/{eid}/checks/{cid}/metrics/{mn}/plot'
+    url = '{ep}/entities/{eid}/checks/{cid}/metrics/{mn}/plot'.format(ep=endpoint, eid=entity_id, cid=check_id, mn=metric_name)
+    
+    r = requests.get(url, headers=headers, params=params)
+    
+    return r.json()

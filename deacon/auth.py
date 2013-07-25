@@ -2,6 +2,8 @@ import keyring
 import requests
 import json
 
+from sys import argv
+
 url = 'https://identity.api.rackspacecloud.com/v2.0/tokens'
 
 def get_auth(pyrax_environment):

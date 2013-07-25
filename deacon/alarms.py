@@ -72,6 +72,70 @@ def create_alarm(entity_id, check_id, notif_plan, criteria):
         return r.headers['Location']
 
 
+def create_memory_alarm(entity_id, check_id, notif_plan):
+    criteria = """
+    if (percentage(metric["actual_free"], metric["total"]) <= 20) {
+        return new AlarmStatus(WARNING, "Actual free RAM too low: #{actual_free} bytes");
+    }
+    if (percentage(metric["swap_free"], metric["swap_total"]) <= 20) {
+        return new AlarmStatus(WARNING,"Free swap too low: #{swap_free} bytes");
+    }
+    return new AlarmStatus(OK);
+    """
+    
+    alarm = create_alarm(entity_id, check_id, notif_plan, criteria)
+    
+    return alarm
+    
+
+def create_load_average_alarm(entity_id, check_id, notif_plan):
+    criteria = """
+    if (metric["5m"] > 4) {
+        return new AlarmStatus(WARNING, "Load Average increased to #{5m}");
+    }
+    return new AlarmStatus(OK);
+    """
+    
+    alarm = create_alarm(entity_id, check_id, notif_plan, criteria)
+    
+    return alarm
+    
+
+def create_filesystem_alarm(entity_id, check_id, notif_plan):
+    criteria = """
+    if (percentage(metric["free_files"], metric["files"]) <= 20) {
+        return new AlarmStatus(WARNING, "inodes usage exceeded 80%");
+    }
+    if (percentage(metric["avail"], metric["total"]) <= 20) {
+        return new AlarmStatus(WARNING, "Disk usage exceeded 80%");
+    }
+    return new AlarmStatus(OK);
+    """
+    
+    alarm = create_alarm(entity_id, check_id, notif_plan, criteria)
+    
+    return alarm
+    
+
+def create_cpu_alarm(entity_id, check_id, notif_plan):
+    criteria = """
+    if ((metric["max_cpu_usage"] >= 95) && (metric["min_cpu_usage"] <= 10)) {
+        return new AlarmStatus(WARNING, "Possible runaway process detected");
+    }
+    if (metric["wait_percent_average"] >= 65) {
+        return new AlarmStatus(WARNING, "Detected high wait status: #{wait_percent_average}%");
+    }
+    if (metric["usage_average"] >= 90) {
+        return new AlarmStatus(WARNING, "Usage average reached #{usage_average}%");
+    }
+    return new AlarmStatus(OK, "CPU usage stabilized");
+    """
+    
+    alarm = create_alarm(entity_id, check_id, notif_plan, criteria)
+    
+    return alarm
+
+
 def update_alarm(entity_id, alarm_id):
     url = '{ep}/entities/{eid}/alarms/{aid}'.format(ep=endpoint, eid=entity_id, aid=alarm_id)
     

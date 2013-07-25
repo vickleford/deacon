@@ -26,6 +26,93 @@ template = \
 }
 
 
+def create_check(entity_id, timeout=15, period=60, mzpoll=[ "mzdfw", "mzord", "mziad", "mzlon", "mzhkg", "mzsyd" ], extras={}):
+    """
+    Create a check and return the link to it.
+    
+    Expecting extras to have things like type, label, target_alias, details, etc
+    """
+    
+    payload = {
+        "monitoring_zones_poll": mzpoll,
+        "timeout": timeout,
+        "period": period,
+        "target_alias": "default"
+    }
+
+    payload.update(extras)
+    
+    # agent checks cannot have any monitoring zones
+    if "agent" in payload['type']:
+        del payload['monitoring_zones_poll']
+    
+    url = '{ep}/entities/{eid}/checks'.format(ep=endpoint, eid=entity_id)
+    
+    r = requests.post(url, data=json.dumps(payload), headers=headers)
+    
+    if r.status_code == 201:
+        return r.headers['Location']
+    else:
+        return r.json()
+
+
+def create_network_check(entity_id, target='eth0'):
+    personality = {
+    
+    }
+
+def create_disk_check(entity_id, target='/dev/xvda1'):
+    personality = {
+        "type": "agent.disk",
+        "details": {
+            "target": target
+        },
+        "label": "{t} Disk Check".format(t=target)
+    }
+    
+    return create_check(entity_id, extras=personality)
+        
+
+def create_memory_check(entity_id):
+    personality = {
+        "type": "agent.memory",
+        "label": "Memory"
+    }
+    
+    return create_check(entity_id, extras=personality)
+    
+
+def create_load_average_check(entity_id):
+    personality = {
+        "type": "agent.load_average",
+        "label": "Load Average"
+    }
+    
+    return create_check(entity_id, extras=personality)
+
+
+def create_filesystem_check(entity_id):
+    personality = {
+        "type": "agent.filesystem",
+        "details": {
+            "target": "/"
+        },
+        "label": "Filesystem Check"
+    }
+    
+    return create_check(entity_id, extras=personality)
+    
+
+def create_cpu_check(entity_id):
+    personality = { 
+        "type": "agent.cpu",
+        "label": "CPU Check",
+    }
+    
+    return create_check(entity_id, extras=personality)
+
+
+
 def get_check(entity_id, check_id):
     url = '{ep}/entities/{eid}/checks/{cid}'.format(ep=endpoint, eid=entity_id, cid=check_id)
     
@@ -43,7 +130,7 @@ def create_ping_check(entity_id, target_alias):
         "label": "Ping check for {0}".format(target_alias), 
         "type": "remote.ping", 
         "details": {
-            "count": 10
+            "count": 20
         },
         'target_alias': target_alias
     }
@@ -122,3 +209,14 @@ def destroy_some_checks_all_entities(type):
     
     for ent in ents:
         destroy_all_checks(ent['id'], type)
+        
+        
+def update_check(entity_id, check_id, payload):
+    url = "{ep}/entities/{eid}/checks/{cid}".format(ep=endpoint, eid=entity_id, cid=check_id)
+
+    r = requests.put(url, data=json.dumps(payload), headers=headers)
+
+    if r.status_code != 204:
+        return r.json()
+    else:
+        return True
