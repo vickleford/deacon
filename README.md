@@ -1,5 +1,7 @@
 Truthfully, I'm really just using it from ipython as a script suite right now--yes, calling the functions individually.
 
+---
+
 This example creates ping checks for all network interfaces on all entities on an account with a bunch of hard-coded defaults.
 
     aluminum13:deacon$ python
@@ -51,7 +53,7 @@ This example creates ping checks for all network interfaces on all entities on a
     {'target_alias': u'public1_v4', 'period': 60, 'label': 'Ping check for public1_v4', 'details': {'count': 10}, 'timeout': 15, 'monitoring_zones_poll': ['mzdfw', 'mzord', 'mziad', 'mzlon', 'mzhkg', 'mzsyd'], 'type': 'remote.ping'}
     >>> ^D
     
-    
+---
     
 This example creates load average checks then creates alarms for those checks
 
@@ -83,3 +85,25 @@ This example creates load average checks then creates alarms for those checks
     'https://monitoring.api.rackspacecloud.com/v1.0/xxxxxx/entities/envQh1t1BX/alarms/alludq89ww'
     'https://monitoring.api.rackspacecloud.com/v1.0/xxxxxx/entities/enz9bF86Rf/alarms/alJNkHOYA1'
     >>>
+    
+---
+    
+This example updates the count on all your ping checks
+
+    aluminum13:deacon$ python
+    Python 2.7.3 (default, Oct 22 2012, 06:12:28)
+    [GCC 4.2.1 (Apple Inc. build 5666) (dot 3)] on darwin
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>> from deacon.console import *
+    >>> for e in get_entities()['values']:
+    ...     for c in list_checks(e['id'])['values']:
+    ...             if c['type'] == 'remote.ping':
+    ...                     update_check(e['id'], c['id'], {"details": { "count": 5 }})
+    ...
+    True
+    True
+    True
+    True
+    True
+    True
+    True
