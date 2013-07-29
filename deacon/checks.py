@@ -37,7 +37,7 @@ def create_check(entity_id, timeout=15, period=60, mzpoll=[ "mzdfw", "mzord", "m
         "monitoring_zones_poll": mzpoll,
         "timeout": timeout,
         "period": period,
-        "target_alias": "default"
+        "target_alias": "public0_v4"
     }
 
     payload.update(extras)
@@ -45,6 +45,7 @@ def create_check(entity_id, timeout=15, period=60, mzpoll=[ "mzdfw", "mzord", "m
     # agent checks cannot have any monitoring zones
     if "agent" in payload['type']:
         del payload['monitoring_zones_poll']
+        del payload['target_alias']
     
     url = '{ep}/entities/{eid}/checks'.format(ep=endpoint, eid=entity_id)
     
@@ -53,9 +54,43 @@ def create_check(entity_id, timeout=15, period=60, mzpoll=[ "mzdfw", "mzord", "m
     if r.status_code == 201:
         return r.headers['Location']
     else:
-        return r.json()
+        why = r.json()
+        if "no such alias public" in why['details']:
+            payload.update({"target_alias": "public1_v4"})
+            print("Retrying with alternate target alias")
+            r = requests.post(url, data=json.dumps(payload), headers=headers)
+            if r.status_code == 201:
+                return r.headers['Location']
+            else:
+                return r.json()
 
 
+def create_mongo_check(entity_id, url, target_alias='alvn0_v4'):
+    personality = {
+        "type": "remote.http",
+        "label": "MongoDB REST",
+        "details": {
+            "url": url,
+            "body": "total_rows",
+        },
+        "target_alias": target_alias
+    }
+    
+    return create_check(entity_id, extras=personality)            
+    
+    
+def create_ssh_check(entity_id, port=22):
+    personality = {
+        "type": "remote.ssh",
+        "label": "OpenSSH Check",
+        "details": {
+            "port": port,
+        }
+    }
+    
+    return create_check(entity_id, extras=personality)
+    
+    
 def create_network_check(entity_id, target='eth0'):
     personality = {
         "type": "agent.network",
@@ -137,7 +172,7 @@ def create_ping_check(entity_id, target_alias):
         "label": "Ping check for {0}".format(target_alias), 
         "type": "remote.ping", 
         "details": {
-            "count": 20
+            "count": 5
         },
         'target_alias': target_alias
     }
