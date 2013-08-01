@@ -91,9 +91,6 @@ def create_mongo_alarm(entity_id, check_id, notif_plan):
     
 def create_ssh_alarm(entity_id, check_id, notif_plan):
     criteria = """
-    if (metric["duration"] >= 2500) {
-        return new AlarmStatus(WARNING, "SSH daemon took #{duration}ms to respond");
-    }
     if (previous(metric["fingerprint"]) != metric["fingerprint"]) {
         return new AlarmStatus(WARNING, "SSH fingerprint changed to #{fingerprint}");
     }

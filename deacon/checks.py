@@ -65,6 +65,16 @@ def create_check(entity_id, timeout=15, period=60, mzpoll=[ "mzdfw", "mzord", "m
                 return r.json()
 
 
+def create_http_check(entity_id, label, details):
+    personality = {
+        "type": "remote.http",
+        "label": label,
+        "details": details
+    }
+    
+    return create_check(entity_id, extras=personality)
+
+
 def create_mongo_check(entity_id, url, target_alias='alvn0_v4'):
     personality = {
         "type": "remote.http",
@@ -154,6 +164,20 @@ def create_cpu_check(entity_id):
     return create_check(entity_id, extras=personality)
 
 
+def create_ping_check(entity_id, target_alias='public0_v4'):
+    url = "{ep}/entities/{eid}/checks".format(ep=endpoint, eid=entity_id)
+
+    personality = { 
+        "label": "Ping check for {0}".format(target_alias), 
+        "type": "remote.ping", 
+        "details": {
+            "count": 5
+        },
+        'target_alias': target_alias
+    }
+
+    return create_check(entity_id, extras=personality)
+
 
 def get_check(entity_id, check_id):
     url = '{ep}/entities/{eid}/checks/{cid}'.format(ep=endpoint, eid=entity_id, cid=check_id)
@@ -163,7 +187,7 @@ def get_check(entity_id, check_id):
     return r.json()
 
 
-def create_ping_check(entity_id, target_alias):
+def old_create_ping_check(entity_id, target_alias):
     url = "{ep}/entities/{eid}/checks".format(ep=endpoint, eid=entity_id)
     
     payload = deepcopy(template)
@@ -178,7 +202,7 @@ def create_ping_check(entity_id, target_alias):
     }
     
     payload.update(specifics)
-    print(payload)
+
     r = requests.post(url, data=json.dumps(payload), headers=headers)
     
     if r.status_code != 201:

@@ -5,6 +5,47 @@ from auth import token, endpoint
 
 headers = {'Content-Type': 'application/json', 'X-Auth-Token': token}
 
+
+def create_entity(label, agent_id=None, ip_addresses=None, metadata=None):
+    """
+    
+    Expecting ip_addresses to be a hash [String,String between 1 and 64 characters long:IPv4 or IPv6 address]
+    """
+    
+    url = "{ep}/entities".format(ep=endpoint)
+    
+    payload = {
+        "label": label,
+    }
+    
+    if agent_id is not None:
+        payload.update({"agent_id": agent_id})
+    
+    if ip_addresses is not None:
+        payload.update({"ip_addresses": ip_addresses})
+        
+    if metadata is not None:
+        payload.update({"metadata": metadata})
+    
+    r = requests.post(url, data=json.dumps(payload), headers=headers)
+    
+    if r.status_code == 201:
+        return r.headers['Location']
+    else:
+        return r.json()
+
+
+def delete_entity(entity_id):
+    url = "{ep}/entities/{eid}".format(ep=endpoint, eid=entity_id)
+    
+    r = requests.delete(url, headers=headers)
+    
+    if r.status_code == 204:
+        return True
+    else:
+        return r.json()
+    
+    
 def get_entities():
     url = "{ep}/entities".format(ep=endpoint)
     r = requests.get(url, headers=headers)
