@@ -6,6 +6,7 @@ from deacon.metrics import *
 from deacon.notifications import *
 from deacon.monitoring_zones import *
 from deacon.agent import *
+from deacon.views import *
 
 
 def monitor_api_index(entity_id, notif_plan):
@@ -21,6 +22,7 @@ def monitor_api_index(entity_id, notif_plan):
     check_id = check.split('/')[8]
     
     criteria = """
+    :set consecutiveCount=2
     # 604800 seconds in 1 week
     # 1814400 seconds in 3 weeks
     if (metric["cert_end_in"] < 1814400) {
@@ -59,6 +61,7 @@ def monitor_ui_index(entity_id, notif_plan):
     check_id = check.split('/')[8]
     
     criteria = """
+    :set consecutiveCount=2
     # 604800 seconds in 1 week
     # 1814400 seconds in 3 weeks
     if (metric["cert_end_in"] < 1814400) {
