@@ -26,9 +26,16 @@ template = \
 }
 
 
+def filter_check_id(url):
+    """Return the check ID from the URL of a check."""
+    
+    check_id = url.split('/')[8]
+    return check_id
+    
+
 def create_check(entity_id, timeout=15, period=60, mzpoll=[ "mzdfw", "mzord", "mziad", "mzlon", "mzhkg", "mzsyd" ], extras={}):
     """
-    Create a check and return the link to it.
+    Create a check and return its ID.
     
     Expecting extras to have things like type, label, target_alias, details, etc
     """
@@ -52,7 +59,7 @@ def create_check(entity_id, timeout=15, period=60, mzpoll=[ "mzdfw", "mzord", "m
     r = requests.post(url, data=json.dumps(payload), headers=headers)
     
     if r.status_code == 201:
-        return r.headers['Location']
+        churl = r.headers['Location']
     else:
         why = r.json()
         if "no such alias public" in why['details']:
@@ -60,9 +67,11 @@ def create_check(entity_id, timeout=15, period=60, mzpoll=[ "mzdfw", "mzord", "m
             print("Retrying with alternate target alias")
             r = requests.post(url, data=json.dumps(payload), headers=headers)
             if r.status_code == 201:
-                return r.headers['Location']
+                churl = r.headers['Location']
             else:
                 return r.json()
+                
+    return filter_check_id(churl)
 
 
 def create_http_check(entity_id, label, details):

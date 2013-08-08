@@ -17,9 +17,8 @@ def monitor_api_index(entity_id, notif_plan):
         "body": "Not Found"
     }
     
-    check = create_http_check(entity_id, "API Index", personality)
-    print("created check: {0}".format(check))
-    check_id = check.split('/')[8]
+    check_id = create_http_check(entity_id, "API Index", personality)
+    print("created check: {0}".format(check_id))
     
     criteria = """
     :set consecutiveCount=2
@@ -55,11 +54,9 @@ def monitor_ui_index(entity_id, notif_plan):
         "body": "script type"
     }
     
-    check = create_http_check(entity_id, "UI Index", personality)
-    print("created check: {0}".format(check))
-    
-    check_id = check.split('/')[8]
-    
+    check_id = create_http_check(entity_id, "UI Index", personality)
+    print("created check: {0}".format(check_id))
+        
     criteria = """
     :set consecutiveCount=2
     # 604800 seconds in 1 week
