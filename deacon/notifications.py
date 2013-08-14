@@ -92,7 +92,7 @@ def test_existing_notification(nt_id):
 def discover_alarm_notification_history(entity_id, alarm_id):
     url = '{ep}/entities/{eid}/alarms/{aid}/notification_history'.format(ep=endpoint, eid=entity_id, aid=alarm_id)
     
-    r = requests.post(url, headers=headers)
+    r = requests.get(url, headers=headers)
     
     return r.json()
     
@@ -100,7 +100,7 @@ def discover_alarm_notification_history(entity_id, alarm_id):
 def list_alarm_notification_history(entity_id, alarm_id, check_id):
     url = '{ep}/entities/{eid}/alarms/{aid}/notification_history/{cid}'.format(ep=endpoint, eid=entity_id, aid=alarm_id, cid=check_id)
     
-    r = requests.post(url, headers=headers)
+    r = requests.get(url, headers=headers)
     
     return r.json()
     
@@ -108,7 +108,7 @@ def list_alarm_notification_history(entity_id, alarm_id, check_id):
 def get_alarm_notification_history(entity_id, alarm_id, check_id, uuid):
     url = '{ep}/entities/{eid}/alarms/{aid}/notification_history/{cid}/{uuid}'.format(ep=endpoint, eid=entity_id, aid=alarm_id, cid=check_id, ud=uuid)
     
-    r = requests.post(url, headers=headers)
+    r = requests.get(url, headers=headers)
     
     return r.json()
     

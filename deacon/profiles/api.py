@@ -2,6 +2,7 @@ import deacon.checks as checks
 import deacon.alarms as alarms
 from deacon.entities import get_entity
 
+
 def monitor_api_index(entity_id, notif_plan):
     e = get_entity(entity_id)
     
@@ -53,7 +54,7 @@ def monitor_api_healthcheck(entity_id, notif_plan):
     check_id = checks.create_http_check(e['id'], "API Healthcheck", personality)
     
     criteria = """
-    if (metric["body_match_mongo"] != "\"hbase\": true") {
+    if (metric["body_match_mongo"] != "\\"mongo\\": true") {
         return new AlarmStatus(CRITICAL, "Can't connect to mongo");
     }
     return new AlarmStatus(OK);
