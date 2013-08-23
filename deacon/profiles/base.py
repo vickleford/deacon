@@ -25,7 +25,7 @@ def make_default_monitors(entity_id, notif_id):
     alarms.create_ssh_alarm(entity_id, ch_ssh, notif_id)
     alarms.create_memory_alarm(entity_id, ch_mem, notif_id)
     alarms.create_load_average_alarm(entity_id, ch_load, notif_id)
-    alarms.create_filesystem_alarm(entity_id, ch_load, notif_id)
+    alarms.create_filesystem_alarm(entity_id, ch_fs, notif_id)
     alarms.create_cpu_alarm(entity_id, ch_cpu, notif_id)
     alarms.create_ping_alarm(entity_id, ch_ping, notif_id)
     

@@ -57,6 +57,9 @@ def monitor_api_healthcheck(entity_id, notif_plan):
     if (metric["body_match_mongo"] != "\\"mongo\\": true") {
         return new AlarmStatus(CRITICAL, "Can't connect to mongo");
     }
+    if (metric["body_match_hbase"] != "\\"hbase\\": true") {
+        return new AlarmStatus(CRITICAL, "Can't connect to hbase");
+    }
     return new AlarmStatus(OK);
     """
     
