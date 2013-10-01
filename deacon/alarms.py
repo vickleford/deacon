@@ -163,6 +163,35 @@ def create_cpu_alarm(entity_id, check_id, notif_plan):
     alarm = create_alarm(entity_id, check_id, notif_plan, "CPU", criteria)
     
     return alarm
+    
+    
+def create_es_cluster_alarm(entity_id, check_id, notif_plan):
+    criteria = """
+    if (metric["status"] == "red") {
+        return new AlarmStatus(CRITICAL);
+    }
+    if (metric["status"] == "yellow") {
+        return new AlarmStatus(WARNING);
+    }
+    if (metric["status"] == "green") {
+        return new AlarmStatus(OK);
+    }
+    """
+    
+    alarm = create_alarm(entity_id, check_id, notif_plan, "ES Cluster", criteria)
+    
+    return alarm
+    
+def create_es_num_nodes_alarm(entity_id, check_id, notif_plan):
+    criteria = """
+    if (metric["number_of_nodes"] != previous(metric["number_of_nodes"])) {
+        return new AlarmStatus(WARNING);
+    }
+    """
+
+    alarm = create_alarm(entity_id, check_id, notif_plan, "ES Num. Nodes", criteria)
+
+    return alarm
 
 
 def update_alarm(entity_id, alarm_id, payload):

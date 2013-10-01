@@ -1,9 +1,18 @@
 import requests
+import logging
+import httplib
 import json
 from copy import deepcopy
 
 from auth import token, endpoint
 from entities import get_entity, get_entities
+
+#httplib.HTTPConnection.debuglevel = 1
+#logging.basicConfig()
+#logging.getLogger().setLevel(logging.DEBUG)
+#requests_log = logging.getLogger("requests.packages.urllib3")
+#requests_log.setLevel(logging.DEBUG)
+#requests_log.propagate = True
 
 headers = {'Content-Type': 'application/json', 'X-Auth-Token': token}
 
@@ -185,6 +194,24 @@ def create_ping_check(entity_id, target_alias='public0_v4'):
         'target_alias': target_alias
     }
 
+    return create_check(entity_id, extras=personality)
+    
+    
+def create_plugin_check(entity_id, file, label=None, args=None):
+    personality = {
+        "label": "plugin check for {0}".format(file),
+        "type": "agent.plugin",
+        "details": {
+            "file": file
+        }
+    }
+    
+    if label:
+        personality.update({"label": label})
+    
+    if args:
+        personality['details'].update({"args": args})
+    
     return create_check(entity_id, extras=personality)
 
 
